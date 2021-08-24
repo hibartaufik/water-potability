@@ -153,11 +153,156 @@ plt.show()
 
 ## 3. Data Preprocessing
 ### 3.1 Handling Missing Value
+Berdasarkan pengamatan Histplot, semua feature (yang kesemuanya feature numerik) memiliki data yang hampir terditribusi normal sehingga data yang bernilai kosong dapat diganti dengan nilai mean.
+```
+df.fillna(df.mean(), inplace=True)
+```
+```
+df.tail()
+```
+![image](https://user-images.githubusercontent.com/74480780/130568943-7c9e928f-3a5c-4b9e-a322-a85175f6c10f.png)
+
 ### 3.2 Remove Outliers
+Dalam visualisasi sebelumnya, khususnya pada visualisasi Boxplot, banyak ditemukan Outliers pada setiap kolom. Outliers akan dihilangkan berdasarkan IQR.
+```
+Q1 = df.quantile(0.25)
+Q3 = df.quantile(0.75)
+
+IQR = Q3 - Q1
+print(IQR)
+```
+![image](https://user-images.githubusercontent.com/74480780/130569054-f0f0a4a9-a2b6-48fd-9cc2-2fec53903680.png)
+
+```
+df.shape
+```
+![image](https://user-images.githubusercontent.com/74480780/130569106-da6e2e06-2cf0-478a-ab81-89feae9c8cec.png)
+
+```
+df = df[~((df < (Q1 - 1.5 * IQR)) | (df > (Q3 + 1.5 * IQR))).any(axis=1)]
+```
+```
+df.shape
+```
+![image](https://user-images.githubusercontent.com/74480780/130569179-3340e313-a60d-4019-8bcf-e4b2ae8389c4.png)
+
 ### 3.3 Balancing Data Target
+Berdasarkan visualisasi Countplot terlihat bahwa data target tidak seimbang (imbalance target data), data yang bernilai 0 lebih banyak dari data yang bernilai 1. Dengan begitu perlu dilakukannya metode balancing data dengan undersampling agar dapat meningkatkan kinerja model nantinya. Undersampling adalah membuang data mayoritas agar sama dengan jumlah data minoritas pada kelas tertentu. Dalam kasus ini, data mayoritas ialah data target yang ber-label 0.
+```
+negatif = df.loc[df['Potability'] == 0]
+positif = df.loc[df['Potability'] == 1]
+
+print(f"Jumlah data target berlabel negatif:\t{len(negatif)}")
+print(f"Jumlah data target berlabel positif:\t{len(positif)}")
+```
+![image](https://user-images.githubusercontent.com/74480780/130569370-d1f9d188-8e00-489c-b3f8-4cbfeb6c4ec9.png)
+
+```
+negatif = negatif[:len(positif)]
+
+print("Setelah Undersampling")
+print(f"Jumlah data target berlabel negatif:\t{len(negatif)}")
+print(f"Jumlah data target berlabel positif:\t{len(positif)}")
+```
+![image](https://user-images.githubusercontent.com/74480780/130569439-7b3327c5-7019-447a-8f90-f7e888712d60.png)
+
+```
+df = pd.concat([negatif, positif], ignore_index=True)
+```
+
 ### 3.4 Feature Scaling
+Feature scaling dengan menggunakan MinMaxScaler agar data memiliki rentang nilai yang sama untuk setiap kolomnya.
+```
+scaler = MinMaxScaler()
+scaled_data = scaler.fit_transform(df)
+
+scaled_data
+```
+![image](https://user-images.githubusercontent.com/74480780/130569570-07357a17-1638-4088-853d-73f251c5e4ca.png)
+
+```
+df = pd.DataFrame(scaled_data, index=df.index, columns=df.columns)
+
+df.head()
+```
+![image](https://user-images.githubusercontent.com/74480780/130569637-ba3a0ea7-a828-4a1b-a758-069e37f5fde2.png)
+
 ## 4. Splitting & Modeling
+```
+X = df.drop(columns='Potability')
+y = df['Potability']
+```
+```
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
+```
+```
+model = RandomForestClassifier()
+model.fit(X_train, y_train)
+```
+![image](https://user-images.githubusercontent.com/74480780/130569824-eefe6b15-6d24-406e-a1c9-3e9f43080b29.png)
+
+```
+model.score(X_test, y_test)
+```
+![image](https://user-images.githubusercontent.com/74480780/130570418-13a61722-2f01-4ad5-b9e3-0b3c07d2f429.png)
+
+```
+print(classification_report(y_test, model.predict(X_test)))
+```
+![image](https://user-images.githubusercontent.com/74480780/130570483-8ab9d0e7-3ada-4cda-978b-f8e8706c689a.png)
+
 ## 5. Model Evaluation
 ### 5.1 Hyperparameter Tuning dengan GridSeacrhCV
+```
+pipeline = Pipeline([
+    ('algo', RandomForestClassifier())
+])
+```
+```
+parameters = {
+    'algo__max_depth': [10, 20, 30, 40, None],
+    'algo__bootstrap': [True, False],
+    'algo__n_estimators': [10, 100, 1000],
+    'algo__max_features': ['sqrt', 'log2'],    
+}
+```
+```
+new_model = GridSearchCV(pipeline, parameters, cv=4, verbose=1)
+new_model.fit(X_train, y_train)
+```
+![image](https://user-images.githubusercontent.com/74480780/130570705-d79422ed-2bd5-44e8-adfe-a5c0dabe3faa.png)
+
+```
+new_model.score(X_test, y_test)
+```
+![image](https://user-images.githubusercontent.com/74480780/130570766-9a5b7559-f208-4c8f-99b5-4ba200d111cc.png)
+
+```
+new_model.best_params_
+```
+![image](https://user-images.githubusercontent.com/74480780/130570820-6a74abf5-819a-48ba-a81c-b2d08decef36.png)
+
+```
+model.score(X_test, y_test), new_model.score(X_test, y_test)
+```
+![image](https://user-images.githubusercontent.com/74480780/130570870-2203bb65-348c-4929-b360-62c6edf405b4.png)
+
+```
+print(classification_report(y_test, new_model.predict(X_test)))
+```
+![image](https://user-images.githubusercontent.com/74480780/130570954-362918e0-e7ad-4400-9b5a-7260410928d1.png)
+
 ### 5.2 Confusion Matrix
+```
+mx_1 = confusion_matrix(y_test, model.predict(X_test))
+mx_2 = confusion_matrix(y_test, new_model.predict(X_test))
+
+fig, ax = plt.subplots(1, 2, figsize=(10, 3), dpi=200, sharey=True)
+ax = ax.flatten()
+sns.heatmap(mx_1, ax=ax[0], cmap='Blues', annot=True, linewidths=1)
+sns.heatmap(mx_2, ax=ax[1], cmap='Blues', annot=True, linewidths=1)
+
+plt.show()
+```
+
 ## 6. Save Model
