@@ -304,5 +304,31 @@ sns.heatmap(mx_2, ax=ax[1], cmap='Blues', annot=True, linewidths=1)
 
 plt.show()
 ```
+![](./images/confusion_matrix[ME].png)
+
+Model pertama
+```
+print(f"True Positif\t:{round(mx_1[0][0] / (mx_1[0][0] + mx_1[0][1]) * 100, 3)}%\t-> {mx_1[0][0]}")
+print(f"True Negatif\t:{round(mx_1[1][1] / (mx_1[1][1] + mx_1[1][0]) * 100, 3)}%\t-> {mx_1[1][1]}")
+```
+![image](https://user-images.githubusercontent.com/74480780/130572224-dd787fcb-aa77-4abb-a2a3-616534147875.png)
+
+Model kedua
+```
+print(f"True Positif\t:{round(mx_2[0][0] / (mx_2[0][0] + mx_2[0][1]) * 100, 3)}%\t-> {mx_2[0][0]}")
+print(f"True Negatif\t:{round(mx_2[1][1] / (mx_2[1][1] + mx_2[1][0]) * 100, 3)}%\t-> {mx_2[0][0]}")
+```
+![image](https://user-images.githubusercontent.com/74480780/130572290-a75a8663-8f99-4e48-b1f1-fd7eb7ec05dc.png)
 
 ## 6. Save Model
+```
+import pickle
+```
+```
+model_name = "water_potability.rf"
+pickle.dump(model, open(model_name, 'wb'))
+```
+```
+new_model_name = "new_water_potability.rf"
+pickle.dump(new_model, open(new_model_name, 'wb'))
+```
