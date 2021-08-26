@@ -72,7 +72,7 @@ Memasukkan terlebih dahulu semua kolom kecuali data target ke dalam variabel ter
 columns = [col for col in df.columns[:-1]]
 ```
 
-Visualisasi Boxplot & Swarmplot
+- Visualisasi Boxplot & Swarmplot
 ```
 fig, ax = plt.subplots(3, 3, figsize=(12, 6), dpi=600)
 ax = ax.flatten()
@@ -89,6 +89,8 @@ plt.show()
 ```
 ![](./images/boxplot[EDA].png)
 
+Berdasarkan visualisasi di atas, terdapat Outliers di semua kolom.
+
 ```
 fig, ax = plt.subplots(3, 3, figsize=(12, 8), dpi=600)
 ax = ax.flatten()
@@ -104,13 +106,13 @@ plt.show()
 ```
 ![](./images/swarmplot[EDA].png)
 
-Visualisasi dengan Pairplot
+- Visualisasi dengan Pairplot
 ```
 sns.pairplot(df[columns]);
 ```
 ![](./images/pairplot[EDA].png)
 
-Melihat lebih jelas distribusi data dengan Histplot
+- Melihat lebih jelas distribusi data dengan Histplot
 ```
 fig, ax = plt.subplots(3, 3, figsize=(12, 6), dpi=600, sharey=True)
 ax = ax.flatten()
@@ -127,7 +129,9 @@ plt.show()
 ```
 ![](./images/histplot[EDA].png)
 
-Melihat lebih jelas korelasi tiap data dengan Heatmap
+Semua kolom cenderung terdistribusi normal, kecuali kolom 'Solids' yang memiliki distrbusi **skewed right**.
+
+- Melihat lebih jelas korelasi tiap data dengan Heatmap
 ```
 fig, ax = plt.subplots(figsize=(12, 6), dpi=600)
 mask = np.triu(df[columns].corr())
@@ -140,7 +144,9 @@ plt.show()
 ```
 ![](./images/heatmap[EDA].png)
 
-Melihat perbandingan jumlah data target
+Berdasarkan visualisasi di atas, tidak adanya kolom yang saling berkorelasi kuat baik itu korelasi positif maupun negatif
+
+- Melihat perbandingan jumlah data target
 ```
 fig, ax = plt.subplots(figsize=(18, 6), dpi=600)
 sns.countplot(y='Potability', data=df, palette='bright')
@@ -150,6 +156,8 @@ plt.xlabel(None)
 plt.show()
 ```
 ![](./images/countplot_data_target[EDA].png)
+
+Jumlah data target yang berlabel 0 lebih banyak dibanding dengan data yang berlabel 1
 
 ## 3. Data Preprocessing
 ### 3.1 Handling Missing Value
@@ -173,6 +181,7 @@ print(IQR)
 ```
 ![image](https://user-images.githubusercontent.com/74480780/130569054-f0f0a4a9-a2b6-48fd-9cc2-2fec53903680.png)
 
+Dimensi dataset sebelum Outliers dihilangkan
 ```
 df.shape
 ```
@@ -181,6 +190,8 @@ df.shape
 ```
 df = df[~((df < (Q1 - 1.5 * IQR)) | (df > (Q3 + 1.5 * IQR))).any(axis=1)]
 ```
+Dimensi dataset setelah Outliers dihilangkan
+
 ```
 df.shape
 ```
