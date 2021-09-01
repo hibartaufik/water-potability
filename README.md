@@ -264,7 +264,7 @@ print(classification_report(y_test, model.predict(X_test)))
 
 ## 5. Model Evaluation
 
-Mmebuat model baru yang tuning dengan **GridSearchCV**
+Mmebuat model baru yang di-tuning dengan **GridSearchCV**
 
 ### 5.1 Hyperparameter Tuning dengan GridSeacrhCV
 ```
