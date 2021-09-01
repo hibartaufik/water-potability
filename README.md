@@ -263,6 +263,9 @@ print(classification_report(y_test, model.predict(X_test)))
 ![image](https://user-images.githubusercontent.com/74480780/130570483-8ab9d0e7-3ada-4cda-978b-f8e8706c689a.png)
 
 ## 5. Model Evaluation
+
+Mmebuat model baru yang tuning dengan **GridSearchCV**
+
 ### 5.1 Hyperparameter Tuning dengan GridSeacrhCV
 ```
 pipeline = Pipeline([
@@ -292,6 +295,8 @@ new_model.score(X_test, y_test)
 new_model.best_params_
 ```
 ![image](https://user-images.githubusercontent.com/74480780/130570820-6a74abf5-819a-48ba-a81c-b2d08decef36.png)
+
+Membandingkan score model pertama dengan model kedua yang sudah di tuning parameternya
 
 ```
 model.score(X_test, y_test), new_model.score(X_test, y_test)
