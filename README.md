@@ -29,8 +29,6 @@ Photo by <a href="https://unsplash.com/@manuschwendener?utm_source=unsplash&utm_
     - Save Model
     
     Tahapan di atas bukan merupakan tahapan yang baku, tahapan dapat disesuaikan berdasarkan karakteristik data dan studi kasus
-    
-5. Project menggunakan dataset berasal kaggle, disusun oleh Aditya Kadiwal. Dapat diakses [disini](https://www.kaggle.com/adityakadiwal/water-potability)
  
 ## 1. Import Libraries & Dataset
 ```
